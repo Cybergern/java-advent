@@ -1,7 +1,6 @@
-package aoc.problem4;
+package aoc.problem6;
 
 import aoc.util.FileToStringList;
-import aoc.util.Grid;
 import aoc.util.ProblemException;
 import org.junit.jupiter.api.Test;
 
@@ -15,15 +14,15 @@ class Part1Test {
 
     @Test
     void small() throws FileNotFoundException, ProblemException {
-        assertEquals(18, getWordSearchResult("test/data/problem4/small_input.txt"));
+        assertEquals(41, handleInput("test/data/problem6/small_input.txt"));
     }
 
     @Test
     void big() throws FileNotFoundException, ProblemException {
-        assertEquals(2593, getWordSearchResult("test/data/problem4/big_input.txt"));
+        assertEquals(5531, handleInput("test/data/problem6/big_input.txt"));
     }
 
-    int getWordSearchResult(String path) throws FileNotFoundException, ProblemException {
+    int handleInput(String path) throws FileNotFoundException, ProblemException {
         var contents = FileToStringList.readFileToStringList(path);
         var rows = new ArrayList<List<Character>>();
         for (String line : contents) {
@@ -33,10 +32,9 @@ class Part1Test {
                 newRow.add(ch);
             }
         }
-        var grid = new Grid<Character>(rows.size());
+        var grid = new GuardGrid(rows.size());
         grid.fillGrid(rows);
-        System.out.println(grid);
-        return Part1.doWordSearch(grid, "XMAS");
+        return Part1.traverse(grid).size();
     }
 
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Grid<T> {
-    ArrayList<ArrayList<T>> rows;
+    protected ArrayList<ArrayList<T>> rows;
 
     public Grid(int numRows) {
         this.rows = new ArrayList<>();
@@ -40,6 +40,13 @@ public class Grid<T> {
             throw new ProblemException(String.format("%s, %s is outside the grid.", rowNum, colNum));
         }
         return new GridValue(rowNum, colNum, rows.get(rowNum).get(colNum));
+    }
+
+    public void set(int rowNum, int colNum, T newValue) throws ProblemException {
+        if (invalid(rowNum, colNum)) {
+            throw new ProblemException(String.format("%s, %s is outside the grid.", rowNum, colNum));
+        }
+        rows.get(rowNum).set(colNum, newValue);
     }
 
     public boolean invalid(int rowNum, int colNum) {
@@ -106,6 +113,17 @@ public class Grid<T> {
         DOWN,
         DOWN_LEFT,
         LEFT
+    }
+
+    public String toString() {
+        var builder = new StringBuilder();
+        for (ArrayList<T> row : this.rows) {
+            for (T cur : row) {
+                builder.append(cur.toString());
+            }
+            builder.append("\n");
+        }
+        return builder.toString();
     }
 }
 
