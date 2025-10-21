@@ -1,6 +1,7 @@
 package aoc.problem6;
 
-import aoc.util.Grid;
+import aoc.util.CharacterGrid;
+import aoc.util.Position;
 import aoc.util.ProblemException;
 
 import java.util.HashSet;
@@ -13,7 +14,7 @@ public class Part2 {
         var originalGuardDirection = grid.guardDir;
         for (int x=0; x < grid.getHeight(); x++) {
             for (int y=0; y < grid.getWidth(); y++) {
-                if (grid.get(x, y).value == '.') {
+                if (grid.get(x, y).value() == '.') {
                     grid.set(x, y, '#');
                     if (testForLoop(grid)) {
                         validObstructions.add(new Position(x, y));
@@ -45,5 +46,5 @@ public class Part2 {
         return new GuardVector(grid.guardPos.row(), grid.guardPos.col(), grid.guardDir);
     }
 
-    record GuardVector(int rowNum, int colNum, Grid.Direction dir) {}
+    record GuardVector(int rowNum, int colNum, CharacterGrid.Direction dir) {}
 }

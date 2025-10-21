@@ -1,22 +1,23 @@
 package aoc.problem4;
 
-import aoc.util.Grid;
+import aoc.util.CharacterGrid;
+import aoc.util.CharacterGrid.Direction;
 import aoc.util.ProblemException;
 
 import java.util.List;
 
 public class Part2 {
-    public static Integer findWordCross(Grid<Character> wordGrid) throws ProblemException {
+    public static Integer findWordCross(CharacterGrid wordGrid) throws ProblemException {
         var result = 0;
         for (int i=0; i < wordGrid.getHeight(); i++) {
             for (int j=0; j < wordGrid.getWidth(); j++) {
                 var cur = wordGrid.get(i, j);
-                if (cur.value.equals('A')) {
-                    var dirsToSearch = List.of(Grid.Direction.DOWN_RIGHT, Grid.Direction.DOWN_LEFT, Grid.Direction.UP_LEFT, Grid.Direction.UP_RIGHT);
+                if (cur.value() == 'A') {
+                    var dirsToSearch = List.of(Direction.DOWN_RIGHT, Direction.DOWN_LEFT, Direction.UP_LEFT, Direction.UP_RIGHT);
                     var adjacentChars = new StringBuilder();
                     if (dirsToSearch.stream().allMatch(d -> wordGrid.validDirection(cur, d))) {
-                        for (Grid.Direction dir : dirsToSearch) {
-                            adjacentChars.append(wordGrid.getAdjacent(cur, dir).value);
+                        for (Direction dir : dirsToSearch) {
+                            adjacentChars.append(wordGrid.getAdjacent(cur, dir).value());
                         }
                         if ((adjacentChars.toString().contains("SS") || adjacentChars.toString().contains("MM"))
                                 && countChars(adjacentChars.toString(), 'S') == 2

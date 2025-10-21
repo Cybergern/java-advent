@@ -1,36 +1,36 @@
 package aoc.util;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public class Grid<T> {
-    protected ArrayList<ArrayList<T>> rows;
+public class CharacterGrid {
+    protected char[][] rows;
 
-    public Grid(int numRows) {
-        this.rows = new ArrayList<>();
-        for (int i=0; i < numRows; i++) {
-            this.rows.add(new ArrayList<>());
-        }
+    public CharacterGrid(int height, int width) {
+        assert height > 0;
+        assert width > 0;
+        this.rows = new char[height][width];
     }
 
     public int getHeight() {
-        return this.rows.size();
+        return this.rows.length;
     }
 
     public int getWidth() {
-        return this.rows.getFirst().size();
+        return this.rows[0].length;
     }
 
-    public void fillGrid(List<List<T>> lines) throws ProblemException {
-        if (lines.size() != this.rows.size()) {
+    public void fillGrid(List<List<Character>> lines) throws ProblemException {
+        if (lines.size() != getHeight()) {
             throw new ProblemException("Source size does not match grid size");
         }
-        if (! lines.stream().allMatch(l -> l.size() == lines.getFirst().size())) {
+        if (!lines.stream().allMatch(l -> l.size() == lines.getFirst().size())) {
             throw new ProblemException("All lines are not the same length");
         }
         for (int i=0; i < lines.size(); i++) {
             for (int j = 0; j < lines.getFirst().size(); j++) {
-                rows.get(i).add(lines.get(i).get(j));
+                set(i, j, lines.get(i).get(j));
             }
         }
     }
@@ -39,21 +39,34 @@ public class Grid<T> {
         if (invalid(rowNum, colNum)) {
             throw new ProblemException(String.format("%s, %s is outside the grid.", rowNum, colNum));
         }
-        return new GridValue(rowNum, colNum, rows.get(rowNum).get(colNum));
+        return new GridValue(rowNum, colNum, rows[rowNum][colNum]);
     }
 
-    public void set(int rowNum, int colNum, T newValue) throws ProblemException {
+    public Set<Position> getAll(char value) {
+        var matches = new HashSet<Position>();
+        for (int i=0; i < getHeight(); i++) {
+            for (int j=0; j < getWidth(); j++) {
+                var cur = rows[i][j];
+                if (cur == value) {
+                    matches.add(new Position(i, j));
+                }
+            }
+        }
+        return matches;
+    }
+
+    public void set(int rowNum, int colNum, Character newValue) throws ProblemException {
         if (invalid(rowNum, colNum)) {
             throw new ProblemException(String.format("%s, %s is outside the grid.", rowNum, colNum));
         }
-        rows.get(rowNum).set(colNum, newValue);
+        rows[rowNum][colNum] = newValue;
     }
 
     public boolean invalid(int rowNum, int colNum) {
-        return rowNum < 0 || rowNum >= rows.size() || colNum < 0 || colNum > rows.getFirst().size();
+        return rowNum < 0 || rowNum >= getHeight() || colNum < 0 || colNum > getWidth();
     }
 
-    public GridValue getAdjacent(GridValue gridValue, Direction direction) {
+    public GridValue getAdjacent(GridValue gridValue, Direction direction) throws ProblemException {
         if (!validDirection(gridValue, direction))
             return gridValue;
         return switch (direction) {
@@ -74,11 +87,11 @@ public class Grid<T> {
                 return false;
         }
         if (List.of(Direction.RIGHT, Direction.UP_RIGHT, Direction.DOWN_RIGHT).contains(direction)) {
-            if (gridValue.colNum >= this.rows.getFirst().size() - 1)
+            if (gridValue.colNum >= getWidth() - 1)
                 return false;
         }
         if (List.of(Direction.DOWN, Direction.DOWN_LEFT, Direction.DOWN_RIGHT).contains(direction)) {
-            if (gridValue.rowNum >= this.rows.size() - 1)
+            if (gridValue.rowNum >= getHeight() - 1)
                 return false;
         }
         if (List.of(Direction.LEFT, Direction.UP_LEFT, Direction.DOWN_LEFT).contains(direction)) {
@@ -87,21 +100,26 @@ public class Grid<T> {
         return true;
     }
 
-    private GridValue transformCoord(GridValue coords, int rowMod, int colMod) {
+    private GridValue transformCoord(GridValue coords, int rowMod, int colMod) throws ProblemException {
         var newRow = coords.rowNum + rowMod;
         var newCol = coords.colNum + colMod;
-        return new GridValue(newRow, newCol, this.rows.get(newRow).get(newCol));
+        return get(newRow, newCol);
     }
 
-    public class GridValue {
-        public GridValue(int rowNum, int colNum, T value) {
-            this.rowNum = rowNum;
-            this.colNum = colNum;
-            this.value = value;
+    public Set<Character> getUniqueChars() {
+        var uniqueChars = new HashSet<Character>();
+        for (int i=0; i < getHeight(); i++) {
+            for (int j=0; j < getWidth(); j++) {
+                var cur = rows[i][j];
+                if (cur != '.') {
+                    uniqueChars.add(cur);
+                }
+            }
         }
-        public final int rowNum;
-        public final int colNum;
-        public final T value;
+        return uniqueChars;
+    }
+
+    public record GridValue(int rowNum, int colNum, char value) {
     }
 
     public enum Direction {
@@ -117,9 +135,9 @@ public class Grid<T> {
 
     public String toString() {
         var builder = new StringBuilder();
-        for (ArrayList<T> row : this.rows) {
-            for (T cur : row) {
-                builder.append(cur.toString());
+        for (char[] row : this.rows) {
+            for (char cur : row) {
+                builder.append(cur);
             }
             builder.append("\n");
         }

@@ -1,9 +1,8 @@
 package aoc.problem7;
 
+import aoc.util.Combinatorics;
 import aoc.util.ProblemException;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Part1 {
@@ -11,8 +10,9 @@ public class Part1 {
 
     public static Long handleEquations(List<Equation> equations) throws ProblemException {
         var sum = 0L;
+        var combinatorics = new Combinatorics<String>();
         for (Equation eq : equations) {
-            var permutations = makeAllPermutations(OPERATORS, eq.terms().size() - 1L);
+            var permutations = combinatorics.makeAllPermutations(OPERATORS, eq.terms().size() - 1L);
             for (List<String> ops : permutations) {
                 if (getResult(eq.terms(), ops).equals(eq.result())) {
                     sum += eq.result();
@@ -48,22 +48,6 @@ public class Part1 {
         };
     }
 
-    public static List<List<String>> makeAllPermutations(List<String> choices, Long length) {
-        return makeAllPermutations(choices, length, Collections.emptyList());
-    }
 
-    private static List<List<String>> makeAllPermutations(List<String> choices, Long remaining, List<String> start) {
-        if (remaining == 0) {
-            return List.of(start);
-        } else {
-            var results = new ArrayList<List<String>>();
-            for (String choice : choices) {
-                var newStart = new ArrayList<>(start);
-                newStart.add(choice);
-                results.addAll(makeAllPermutations(choices, remaining-1, newStart));
-            }
-            return results;
-        }
-    }
 }
 

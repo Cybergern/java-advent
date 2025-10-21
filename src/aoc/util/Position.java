@@ -1,4 +1,4 @@
-package aoc.problem6;
+package aoc.util;
 
 public record Position(Integer row, Integer col) {
     

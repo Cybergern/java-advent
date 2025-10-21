@@ -1,4 +1,4 @@
-package aoc.problem4;
+package aoc.problem8;
 
 import aoc.util.FileToStringList;
 import aoc.util.CharacterGrid;
@@ -15,15 +15,15 @@ class Part1Test {
 
     @Test
     void small() throws FileNotFoundException, ProblemException {
-        assertEquals(18, getWordSearchResult("test/data/problem4/small_input.txt"));
+        assertEquals(14L, handleInput("test/data/problem8/small_input.txt"));
     }
 
     @Test
     void big() throws FileNotFoundException, ProblemException {
-        assertEquals(2593, getWordSearchResult("test/data/problem4/big_input.txt"));
+        assertEquals(341L, handleInput("test/data/problem8/big_input.txt"));
     }
 
-    int getWordSearchResult(String path) throws FileNotFoundException, ProblemException {
+    Long handleInput(String path) throws FileNotFoundException, ProblemException {
         var contents = FileToStringList.readFileToStringList(path);
         var rows = new ArrayList<List<Character>>();
         for (String line : contents) {
@@ -35,8 +35,7 @@ class Part1Test {
         }
         var grid = new CharacterGrid(rows.size(), rows.getFirst().size());
         grid.fillGrid(rows);
-        System.out.println(grid);
-        return Part1.doWordSearch(grid, "XMAS");
+        return Part1.locateAntinodes(grid);
     }
 
 }

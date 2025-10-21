@@ -32,7 +32,7 @@ class Part2Test {
                 newRow.add(ch);
             }
         }
-        var grid = new GuardGrid(rows.size());
+        var grid = new GuardGrid(rows.size(), rows.getFirst().size());
         grid.fillGrid(rows);
         return Part2.findValidObstructions(grid).size();
     }

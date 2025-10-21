@@ -1,22 +1,23 @@
 package aoc.problem6;
 
-import aoc.util.Grid;
+import aoc.util.CharacterGrid;
+import aoc.util.Position;
 import aoc.util.ProblemException;
 
 import java.util.List;
 
-public class GuardGrid extends Grid<Character> {
+public class GuardGrid extends CharacterGrid {
     Position guardPos;
-    Direction guardDir;
+    CharacterGrid.Direction guardDir;
     List<Character> GUARD_CHARS = List.of('<', '>', '^', 'v');
 
-    public GuardGrid(int numRows) {
-        super(numRows);
+    public GuardGrid(int numRows, int numCols) {
+        super(numRows, numCols);
     }
 
     @Override
     public void fillGrid(List<List<Character>> lines) throws ProblemException {
-        if (lines.size() != this.rows.size()) {
+        if (lines.size() != getHeight()) {
             throw new ProblemException("Source size does not match grid size");
         }
         if (! lines.stream().allMatch(l -> l.size() == lines.getFirst().size())) {
@@ -27,9 +28,9 @@ public class GuardGrid extends Grid<Character> {
                 if (GUARD_CHARS.contains(lines.get(i).get(j))) {
                     guardPos = new Position(i, j);
                     guardDir = getDirection(lines.get(i).get(j));
-                    rows.get(i).add('.');
+                    rows[i][j] = '.';
                 } else {
-                    rows.get(i).add(lines.get(i).get(j));
+                    rows[i][j] = lines.get(i).get(j);
                 }
             }
         }
@@ -67,25 +68,29 @@ public class GuardGrid extends Grid<Character> {
 
     public boolean move() throws ProblemException {
         var nextPos = getAdjacent(get(guardPos.row(), guardPos.col()), guardDir);
-        if (nextPos.rowNum == guardPos.row() && nextPos.colNum == guardPos.col()) {
+        if (nextPos.rowNum() == guardPos.row() && nextPos.colNum() == guardPos.col()) {
             return false;
-        } else if (nextPos.value.equals('#')) {
+        } else if (nextPos.value() == '#') {
             turnRight();
             return true;
         } else {
-            guardPos = new Position(nextPos.rowNum, nextPos.colNum);
+            guardPos = new Position(nextPos.rowNum(), nextPos.colNum());
             return true;
         }
     }
 
     public String toString() {
         var builder = new StringBuilder();
-        for (int y=0; y < this.rows.size(); y++) {
-            for (int x=0; x < this.rows.getFirst().size(); x++) {
+        for (int y=0; y < getHeight(); y++) {
+            for (int x=0; x < getWidth(); x++) {
                 if (y == guardPos.row() && x == guardPos.col()) {
                     builder.append(getGuard());
                 } else {
-                    builder.append(this.rows.get(y).get(x));
+                    try {
+                        builder.append(get(x, y));
+                    } catch (ProblemException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
             builder.append("\n");

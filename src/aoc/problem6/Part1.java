@@ -1,5 +1,6 @@
 package aoc.problem6;
 
+import aoc.util.Position;
 import aoc.util.ProblemException;
 
 import java.util.HashSet;

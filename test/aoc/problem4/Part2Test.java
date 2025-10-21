@@ -1,7 +1,7 @@
 package aoc.problem4;
 
 import aoc.util.FileToStringList;
-import aoc.util.Grid;
+import aoc.util.CharacterGrid;
 import aoc.util.ProblemException;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +33,7 @@ class Part2Test {
                 newRow.add(ch);
             }
         }
-        var grid = new Grid<Character>(rows.size());
+        var grid = new CharacterGrid(rows.size(), rows.getFirst().size());
         grid.fillGrid(rows);
         return Part2.findWordCross(grid);
     }
